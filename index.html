@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Interactive Graph Paper</title>
+  <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+  <script src="lib/snap.svg.js"></script>
+  <script src="lib/spectrum.js"></script>
+  <link rel="stylesheet" href="lib/spectrum.css" />
+  <script src="graphpaper.js"></script>
+  <link rel="stylesheet" href="graphpaper.css" />
+  <script>
+    $(document).ready(function() {
+      var gp = new GraphPaper({w:600, h:600, box:25, 
+          draw:'#cccccc', paper:'#ffffff', grid:'#dddddd'});
+    }); 
+  </script>
+</head>
+<body>
+
+  <div id="tools">
+    <div class="field">
+      <label for="color">Draw</label>
+      <input id="color" type="color" name="color" />
+      <img id="colordrop" src="eyedropper.png">
+    </div>
+    <div class="field">
+      <label for="gridcolor">Grid</label>
+      <input id="gridcolor" type="color" name="gridcolor" />
+      <img id="griddrop" src="eyedropper.png">
+    </div>
+    <div class="field">
+      <label for="paper">Paper</label>
+      <input id="paper" type="color" name="paper" />
+      <img id="paperdrop" src="eyedropper.png">
+    </div>
+    <p class="dropperhelp">Click a box in the graph to select a color.</p>
+    <fieldset>
+      <div class="field">
+        <legend>Grid</legend>
+      </div>
+      <div class="field">
+        <label for="w">Width</label>
+        <input id="w" type="text" name="w" /></label>
+      </div>
+      <div class="field">
+        <label for="h">Height</label>
+        <input id="h" type="text" name="h" />
+      </div>
+      <div class="field">
+        <label for="box">Box</label>
+        <input id="box" type="text" name="box" />
+      </div>
+      <div class="field">
+        <input id="update" type="button" name="update" value="Redraw" />
+      </div>
+    </fieldset>
+  </div>
+  <div id="container">
+    <svg id="graph"></svg>
+  </div>
+
+</body>
+</html>   
