@@ -16,7 +16,8 @@ function GraphPaper(options) {
   var paperFormat = { stroke: stroke, strokeWidth: 1, fill: paper };
   var drawFormat = { stroke: stroke, strokeWidth: 1, fill: fill };
   var boxes = [];
-  var dropper = false;
+  var dropper = false; // holds pointer to one of the color pickers in eyedropper mode
+  var dropper_change; // pointer to appropriate change function 
 
   // color format conversion  
   function hexToRGB(h) {
@@ -34,7 +35,7 @@ function GraphPaper(options) {
     $("#color").spectrum({
       color:fill,
       change: function(color) {
-          fill = color.toRgbString();
+          updateFill(color)
       }
     });
     // the "Grid" color picker
@@ -54,25 +55,43 @@ function GraphPaper(options) {
     });
     // the three eye dropper icons
     $("#colordrop").click(function() {
-      dropper = $("#color");
-      $(".dropperhelp").show(200);
+      eyeDropper($("#color"), updateFill);
     });
     $("#paperdrop").click(function() {
-      dropper = $("#paper");
-      $(".dropperhelp").show(200);
+      eyeDropper($("#paper"), updatePaper);
     });
     $("#griddrop").click(function() {
-      dropper = $("#gridcolor");
-      $(".dropperhelp").show(200);      
+      eyeDropper($("#gridcolor"), updateGrid);
     });
     // populate the fields, set the update event and init Snap
     setFields();
     $("#update").click(redraw);
     snap = Snap("#graph");
   }
+  
+  // enter eye dropper mode
+  function eyeDropper(picker, change) {
+    dropper = picker;
+    dropper_change = change;
+    $(".dropperhelp").show(200);
+  }
+  
+  // exit eye dropper mode
+  function exitEyeDropper(picker) {
+    dropper.spectrum({color: picker.attr('fill')});
+    dropper_change(dropper.spectrum('get'));
+    dropper = false;
+    $(".dropperhelp").hide(200);
+  }
+  
+  // event handler for user changing draw color
+  function updateFill(color) {
+    fill = color.toRgbString();
+    drawFormat.fill = color;
+  }
 
   // event handler for user changing grid color
-  function updateGrid(color, hex) {
+  function updateGrid(color) {
     $("#graph rect").attr('stroke',color);
     stroke = color;
     drawFormat.stroke = color;
@@ -126,9 +145,7 @@ function GraphPaper(options) {
             this.draw();
           }
           else {
-            dropper.spectrum({color: this.attr('fill')});
-            dropper = false;
-            $(".dropperhelp").hide(200);
+            exitEyeDropper(this);
           }
           mouse = true;
           return false;
