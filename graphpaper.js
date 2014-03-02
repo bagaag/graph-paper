@@ -35,7 +35,7 @@ function GraphPaper(options) {
     $("#color").spectrum({
       color:fill,
       change: function(color) {
-          updateFill(color)
+          updateFill(color.toRgbString())
       }
     });
     // the "Grid" color picker
@@ -50,7 +50,9 @@ function GraphPaper(options) {
       color:paper,
       change: function(color) {
           updatePaper(color.toRgbString());
+          console.log('paperHex',paperHex);
           paperHex = color.toHexString();
+          console.log('paperHex',paperHex);
       }
     });
     // the three eye dropper icons
@@ -78,15 +80,17 @@ function GraphPaper(options) {
   
   // exit eye dropper mode
   function exitEyeDropper(picker) {
-    dropper.spectrum({color: picker.attr('fill')});
-    dropper_change(dropper.spectrum('get'));
+    var rgb = picker.attr('fill');
+    dropper.spectrum('set',rgb);
+    dropper_change(rgb); // change event isn't called if set programmatically
     dropper = false;
     $(".dropperhelp").hide(200);
   }
   
   // event handler for user changing draw color
   function updateFill(color) {
-    fill = color.toRgbString();
+    console.log('updateFill', color);
+    fill = color;
     drawFormat.fill = color;
   }
 
@@ -102,9 +106,10 @@ function GraphPaper(options) {
   function updatePaper(color) {
     $("#graph rect").each(function(i,rect){
       rect = $(rect);
-      if (rect.attr('fill')==paperHex) {
+      var thisFill = rect.attr('fill');
+      if (thisFill==paperHex || thisFill==paperFormat.fill) {
         rect.attr('fill', color);
-      }
+      } else console.log('wasnt',rect.attr('fill'));
     });
     paperFormat.fill = color;
   }
